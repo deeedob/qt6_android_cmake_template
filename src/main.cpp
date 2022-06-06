@@ -1,8 +1,8 @@
-#include <filesystem>
 #include <QGuiApplication>
 #ifdef ANDROID_BUILD
     #include <QQmlApplicationEngine>
 #else
+    #include <filesystem>
     #include "enhanced_engine.hpp"
     #include <QQmlContext>
 #endif
@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-
 #ifdef ANDROID_BUILD
     QQmlApplicationEngine engine;
     engine.load(QUrl("qrc:/MainWindow.qml"));
@@ -21,10 +20,13 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("$QmlEngine", &engine);
 
     auto path = std::filesystem::current_path();
-    path.append("qml/main_hot_reload.qml");
+    path = path.parent_path().parent_path();
+    path.append("src/qml/main_hot_reload.qml");
+    std::cout << path.c_str() << std::endl;
     engine.load(path.c_str());
 #endif
 
 
     return app.exec();
 }
+
